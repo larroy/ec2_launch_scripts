@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+#
+# Run this script in GPU instances to install nvidia drivers and nvidia-docker
+#
 set -exuo pipefail
 
 sudo add-apt-repository -y ppa:graphics-drivers/ppa
