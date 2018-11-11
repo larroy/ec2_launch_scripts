@@ -49,6 +49,8 @@ Then you can check that the GPU is accessible from docker running:
 nvidia-docker run -ti nvidia/cuda:9.1-cudnn7-devel nvidia-smi
 ```
 
+Now you are ready to install your deep learning framework of choice.
+
 # How it works?
 
 The `launch.py` script is just a bunch of boto3 calls which configure the security groups, ssh key
