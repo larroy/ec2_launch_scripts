@@ -66,7 +66,7 @@
         name:
             - docker-ce
 
-    - user: name="{{ user_name }}" groups=docker
+    - user: name={{ user_name }} groups=docker
 
     - apt:
         dpkg_options: 'force-confold,force-confdef'
@@ -86,6 +86,20 @@
             - lynx
             - iptables-persistent
             - nmap
+            - build-essential
+            - cmake
+            - ninja-build
+            - curl
+            - libatlas-base-dev
+            - libjemalloc-dev
+            - liblapack-dev
+            - libopenblas-dev
+            - libopencv-dev
+            - libzmq3-dev
+            - software-properties-common
+            - sudo
+            - unzip
+            - wget
     - apt:
         state: absent
         name:
