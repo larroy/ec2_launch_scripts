@@ -75,7 +75,6 @@ fi
 # PROMPT
 
 source /usr/lib/git-core/git-sh-prompt
-source ~/etc/bash/color.sh
 
 function we_are_in_git_work_tree {
     git rev-parse --is-inside-work-tree &> /dev/null
@@ -196,11 +195,7 @@ decrypt()
 
 clone_mxnet()
 {
-    if [ "$#" -ne 1 ];
-        then echo "illegal number of parameters"
-    fi
     pushd .
-    cd $1
     git clone --recursive git@github.com:apache/incubator-mxnet.git mxnet
     popd
 }
@@ -209,6 +204,7 @@ clone_mxnet()
 md() {
     if [ "$#" -ne 1 ];
         then echo "illegal number of parameters"
+        return
     fi
     pandoc $1 | lynx -stdin
 }
