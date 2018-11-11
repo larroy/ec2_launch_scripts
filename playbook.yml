@@ -10,7 +10,7 @@
         name: wheel
         state: present
 
-    - name: Add user "{{ user_name }}"
+    - name: Add user {{ user_name }} to group wheel
       user:
         name: "{{ user_name }}"
         groups: wheel
@@ -27,13 +27,19 @@
         owner: "{{ user_name }}"
         group: "{{ user_name }}"
 
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: "{{ user_name }}"
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
     - file:
         path: /home/{{ user_name }}/.ssh/
         mode: 0700
 
-    - file:
-        path: /home/{{ user_name }}/.ssh/id_rsa
-        mode: 0600
+#    - file:
+#        path: /home/{{ user_name }}/.ssh/id_rsa
+#        mode: 0600
 
     - name: set permissions in /home/{{ user_name }}/bin
       file:
@@ -62,11 +68,28 @@
     - apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
 
+    - name: Create new docker data folder in /home/docker (uses ephemeral storage)
+      file:
+        path: /home/docker
+        state: directory
+
+    - name: Put docker images folder in /home
+      mount:
+        path: /var/lib/docker
+        src: /home/docker
+        fstype: none
+        opts: bind
+        state: mounted
+
+
     - apt:
         name:
             - docker-ce
 
-    - user: name="{{ user_name }}" groups=docker
+    - user:
+        name: "{{ user_name }}"
+        groups: docker
+        append: yes
 
     - apt:
         dpkg_options: 'force-confold,force-confdef'
