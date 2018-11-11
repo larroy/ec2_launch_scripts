@@ -110,7 +110,10 @@ def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, ins
 
 def create_security_groups(ec2_client, ec2_resource):
     sec_group_name = 'ssh_anywhere'
-    ec2_client.delete_security_group(GroupName=sec_group_name)
+    try:
+        ec2_client.delete_security_group(GroupName=sec_group_name)
+    except:
+        pass
     sg = ec2_resource.create_security_group(
         GroupName=sec_group_name,
         Description='SSH from anywhere')
