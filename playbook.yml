@@ -1,0 +1,96 @@
+--- # Ansible playbook to provision instances for myself
+- name: provision
+  hosts: all
+  gather_facts: no
+  become: true
+  become_user: root
+  tasks:
+    - name: Add wheel group
+      group:
+        name: wheel
+        state: present
+
+    - name: Add user "{{ user_name }}"
+      user:
+        name: "{{ user_name }}"
+        groups: wheel
+        shell: /bin/bash
+
+    - name: sync /home/{{ user_name }}
+      synchronize:
+        src: homedir/
+        dest: /home/{{ user_name }}/
+
+    - name: Configure /home/{{ user_name }}
+      file:
+        path: /home/{{ user_name }}
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+
+    - file:
+        path: /home/{{ user_name }}/.ssh/
+        mode: 0700
+
+    - file:
+        path: /home/{{ user_name }}/.ssh/id_rsa
+        mode: 0600
+
+    - name: set permissions in /home/{{ user_name }}/bin
+      file:
+        path: /home/{{ user_name }}/bin
+        mode: "u=rwx,g=rx,o=rx"
+        recurse: yes
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+#    - apt: {update_cache: yes}
+    - command: lsb_release -cs
+      register: lsb_release
+
+    - debug:
+        msg: "{{ lsb_release.stdout }}"
+
+    - apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+
+    - apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
+
+    - apt:
+        name:
+            - docker-ce
+
+    - user: name="{{ user_name }}" groups=docker
+
+    - apt:
+        dpkg_options: 'force-confold,force-confdef'
+        name:
+            - vim-nox
+            - silversearcher-ag
+            - tree
+            - git
+            - openssh-client
+            - bwm-ng
+            - htop
+#            - openjdk-9-jdk-headless
+            - python3-virtualenv
+            - python3-pip
+            - mc
+            - links
+            - lynx
+            - iptables-persistent
+            - nmap
+    - apt:
+        state: absent
+        name:
+            - btrfs-progs
+            - btrfs-tools
+
+    - apt: autoremove=yes
+
