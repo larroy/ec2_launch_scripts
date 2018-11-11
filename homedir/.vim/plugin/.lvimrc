@@ -1,0 +1,1 @@
+set makeprg=scons\ --build=debug\ --assert\ ccflag=-Werror\ --noauto_j
