@@ -42,6 +42,12 @@ output so you can ssh to it.
 
 You can choose your ami depending on your region. For example using the [ubuntu ami locator](https://cloud-images.ubuntu.com/locator/ec2/).
 
+# GPU instances
+For gpu instances you can run `nvidia_setup.sh` once.
+Then you can check that the GPU is accessible from docker running:
+```
+nvidia-docker run -ti nvidia/cuda:9.1-cudnn7-devel nvidia-smi
+```
 
 # How it works?
 
