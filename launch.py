@@ -105,6 +105,7 @@ def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, ins
                 },
             },
         ]
+        , InstanceInitiatedShutdownBehavior = 'terminate'
         , MinCount = instanceCount
         , MaxCount = instanceCount
         , KeyName = keyName
