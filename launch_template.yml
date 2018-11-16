@@ -1,0 +1,6 @@
+---
+# https://cloud-images.ubuntu.com/locator/ec2/
+ami: ami-58d7e821
+instance-type: p3.16xlarge
+instance-name: worker_gpu_pl
+username: piotr

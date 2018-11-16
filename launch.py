@@ -11,6 +11,7 @@ import boto3
 from os.path import expanduser
 from subprocess import call, check_call
 import botocore
+import yaml
 
 
 def wait_port_open(server, port, timeout=None):
@@ -90,7 +91,20 @@ def assemble_userdata():
 def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, instanceCount=1):
     logging.info("Launching {} instances".format(instanceCount))
     instances = ec2.create_instances(
-          ImageId = ami
+        ImageId = ami
+        , BlockDeviceMappings=[
+            {
+                'DeviceName': '/dev/sda1',
+                #'VirtualName': 'string',
+                'Ebs': {
+                    'DeleteOnTermination': True,
+                    'VolumeSize': 300,
+                    'VolumeType': 'gp2',
+                    #'VolumeType': 'io1',
+                    #'Iops': 15000,
+                },
+            },
+        ]
         , MinCount = instanceCount
         , MaxCount = instanceCount
         , KeyName = keyName
@@ -98,7 +112,7 @@ def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, ins
         #, Placement = {'AvailabilityZone': 'eu-central-1a'}
         , UserData = assemble_userdata().as_string()
         , SecurityGroupIds = security_groups
-        )
+    )
     ec2.create_tags(
         Resources = [instance.id for instance in instances]
         , Tags = [
@@ -146,13 +160,16 @@ def wait_for_instances(instances):
         i.reload()
 
 def parse_args():
+    with open('launch_template.yml', 'r') as f:
+        launch_template = yaml.load(f)
     parser = argparse.ArgumentParser(description="launcher")
-    parser.add_argument('-n', '--instance-name', default="{}-{}".format('worker', getpass.getuser()))
-    parser.add_argument('-i', '--instance-type', default="m1.xlarge")
-    parser.add_argument('-u', '--user-name', default=getpass.getuser())
-    parser.add_argument('--ssh-key-file', default=os.path.join(expanduser("~"),".ssh","id_rsa.pub"))
+    parser.add_argument('-n', '--instance-name', default=launch_template.get('instance-name', "{}-{}".format('worker', getpass.getuser())))
+    parser.add_argument('-i', '--instance-type', default=launch_template['instance-type'])
+    parser.add_argument('-u', '--username', default=launch_template['username'])
+    ssh_key = launch_template.get('ssh-key', os.path.join(expanduser("~"),".ssh","id_rsa.pub"))
+    parser.add_argument('--ssh-key-file', default=ssh_key)
     parser.add_argument('--ssh-key-name', default="ssh_{}_key".format(getpass.getuser()))
-    parser.add_argument('-a', '--ami', default="ami-58d7e821")
+    parser.add_argument('-a', '--ami', default=launch_template['ami'])
     parser.add_argument('rest', nargs='*')
     args = parser.parse_args()
     return args
@@ -171,16 +188,16 @@ def config_logging():
     logging.getLogger('urllib3').setLevel(logging.INFO)
     logging.getLogger('s3transfer').setLevel(logging.INFO)
 
-def provision(host, user_name):
+def provision(host, username):
     assert host
-    assert user_name
+    assert username
     ansible_cmd= [
         "ansible-playbook",
         "-v",
         "-u", "ubuntu",
         "-i", "{},".format(host),
         "playbook.yml",
-        "--extra-vars", "user_name={}".format(user_name)]
+        "--extra-vars", "user_name={}".format(username)]
 
     logging.info("Executing: '{}'".format(' '.join(ansible_cmd)))
     os.environ['ANSIBLE_HOST_KEY_CHECKING']='False'
@@ -217,9 +234,9 @@ def main():
     if not ami:
         ami = args.ami
 
-    user_name = input("user name [{}]: ".format(args.user_name))
-    if not user_name:
-        user_name = args.user_name
+    username = input("user name [{}]: ".format(args.username))
+    if not username:
+        username = args.username
 
     ec2_resource = boto3.resource('ec2')
     ec2_client = boto3.client('ec2')
@@ -239,7 +256,7 @@ def main():
     for host in hosts:
         logging.info("Waiting for host {}".format(host))
         wait_port_open(host, 22, 300)
-        provision(host, user_name)
+        provision(host, username)
 
     logging.info("All done, the following hosts are now available: %s", hosts)
     return 0
