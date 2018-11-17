@@ -4,3 +4,7 @@ ami: ami-58d7e821
 instance-type: p3.16xlarge
 instance-name: worker_gpu_pl
 username: piotr
+BlockDeviceMappings:
+- DeviceName: /dev/sda1
+  Ebs: {DeleteOnTermination: true, VolumeSize: 300, VolumeType: gp2}
+
