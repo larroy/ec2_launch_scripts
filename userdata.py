@@ -50,7 +50,7 @@ def raid_setup(raid_device, mount) -> bool:
         def is_root_(x):
             return x['mountpoint'] == '/' or x['mountpoint'] == '[SWAP]'
         if is_root_(x):
-            return true
+            return True
         if 'children' in x:
             for children in x['children']:
                 if is_root_(children):
