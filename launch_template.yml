@@ -1,10 +1,10 @@
 ---
 # https://cloud-images.ubuntu.com/locator/ec2/
-ami: ami-58d7e821
-instance-type: p3.16xlarge
-instance-name: worker_gpu_pl
+ami: ami-08596fdd2d5b64915
+instance-type: m1.small
+instance-name: general
 username: piotr
 BlockDeviceMappings:
 - DeviceName: /dev/sda1
-  Ebs: {DeleteOnTermination: true, VolumeSize: 300, VolumeType: gp2}
+  Ebs: {DeleteOnTermination: true, VolumeSize: 2000, VolumeType: gp2}
 
