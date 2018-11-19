@@ -23,7 +23,7 @@ def _not(func):
         return not func(*args, **kwargs)
     return not_func
 
-def raid_setup(raid_device, mount) -> bool:
+def raid_setup(raid_device, mount, level='0') -> bool:
     """Create raid device.
     :param raid_device: device for the raid, ex: /dev/md0
     :param mount: mount point, ex: /home
@@ -81,7 +81,7 @@ def raid_setup(raid_device, mount) -> bool:
     call(['partprobe'])
 
     # Create raid
-    cmd = ['mdadm', '--create', '--force', '--verbose', raid_device, '--level=0', '-c256',
+    cmd = ['mdadm', '--create', '--force', '--verbose', raid_device, '--level={}'.format(level), '-c64K',
         '--raid-devices={}'.format(len(ephemeral_devices))]
     cmd.extend(ephemeral_devices)
     check_call(cmd)
@@ -110,10 +110,10 @@ def raid_setup(raid_device, mount) -> bool:
     return True
 
 
-def raid_setup_file_preserving(raid_dev, mount_point):
+def raid_setup_file_preserving(raid_dev, mount_point, level='0'):
     assert mount_point.startswith('/')
     check_call(['rsync', '-vaP', mount_point, '/tmp'])
-    raid_setup(raid_dev, mount_point)
+    raid_setup(raid_dev, mount_point, level)
     check_call(['rsync', '-vaP', '/tmp{}/'.format(mount_point), mount_point])
     shutil.rmtree('/tmp{}'.format(mount_point))
 
@@ -121,7 +121,7 @@ def raid_setup_file_preserving(raid_dev, mount_point):
 def main():
     config_logging()
     logging.info("Starting userdata.py")
-    raid_setup_file_preserving('/dev/md0', '/home')
+    raid_setup_file_preserving('/dev/md0', '/home', '5')
     write_userdata_complete()
     logging.info("userdata.py finished")
     return 0

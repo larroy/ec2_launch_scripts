@@ -123,6 +123,8 @@
             - sudo
             - unzip
             - wget
+            - sysstat
+            - awscli
     - apt:
         state: absent
         name:

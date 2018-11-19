@@ -98,6 +98,7 @@ def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, blo
         , KeyName = keyName
         , InstanceType = instance_type
         #, Placement = {'AvailabilityZone': 'eu-central-1a'}
+        #, InstanceInitiatedShutdownBehavior = 'terminate'
         , UserData = assemble_userdata().as_string()
         , SecurityGroupIds = security_groups
     )
