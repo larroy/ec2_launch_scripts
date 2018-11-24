@@ -121,7 +121,7 @@ def raid_setup_file_preserving(raid_dev, mount_point, level='0'):
 def main():
     config_logging()
     logging.info("Starting userdata.py")
-    raid_setup_file_preserving('/dev/md0', '/home', '5')
+    raid_setup_file_preserving('/dev/md0', '/home', '0')
     write_userdata_complete()
     logging.info("userdata.py finished")
     return 0
