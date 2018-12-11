@@ -88,24 +88,12 @@ def assemble_userdata():
         combined_message.attach(sub_message)
     return combined_message
 
-def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, instanceCount=1):
+def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, blockDeviceMappings, instanceCount=1):
     logging.info("Launching {} instances".format(instanceCount))
     instances = ec2.create_instances(
         ImageId = ami
-        , BlockDeviceMappings=[
-            {
-                'DeviceName': '/dev/sda1',
-                #'VirtualName': 'string',
-                'Ebs': {
-                    'DeleteOnTermination': True,
-                    'VolumeSize': 300,
-                    'VolumeType': 'gp2',
-                    #'VolumeType': 'io1',
-                    #'Iops': 15000,
-                },
-            },
-        ]
         , InstanceInitiatedShutdownBehavior = 'terminate'
+        , BlockDeviceMappings = blockDeviceMappings
         , MinCount = instanceCount
         , MaxCount = instanceCount
         , KeyName = keyName
@@ -251,7 +239,10 @@ def main():
         security_groups = ['ssh_anywhere']
 
     logging.info("creating instances")
-    instances = create_instances(ec2_resource, instance_name, instance_type, args.ssh_key_name, ami, security_groups)
+    with open('launch_template.yml', 'r') as f:
+        launch_template = yaml.load(f)
+    instances = create_instances(ec2_resource, instance_name, instance_type, args.ssh_key_name, ami,
+    security_groups, launch_template['BlockDeviceMappings'])
     wait_for_instances(instances)
     hosts = [i.public_dns_name for i in instances]
     for host in hosts:

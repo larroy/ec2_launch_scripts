@@ -1,6 +1,25 @@
 ---
 # https://cloud-images.ubuntu.com/locator/ec2/
-ami: ami-58d7e821
-instance-type: p3.16xlarge
-instance-name: worker_gpu_pl
+ami: ami-08596fdd2d5b64915
+instance-type: t3.small
+instance-name: general
 username: piotr
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
+BlockDeviceMappings:
+- DeviceName: /dev/sda1
+  Ebs: {DeleteOnTermination: true, VolumeSize: 40, VolumeType: gp2}
+- DeviceName: /dev/sdf
+  Ebs: {DeleteOnTermination: false, VolumeSize: 2000, VolumeType: gp2}
+- DeviceName: /dev/sdg
+  Ebs: {DeleteOnTermination: false, VolumeSize: 2000, VolumeType: gp2}
+- DeviceName: /dev/sdh
+  Ebs: {DeleteOnTermination: false, VolumeSize: 2000, VolumeType: gp2}
+- DeviceName: /dev/sdi
+  Ebs: {DeleteOnTermination: false, VolumeSize: 2000, VolumeType: gp2}
+- DeviceName: /dev/sdj
+  Ebs: {DeleteOnTermination: false, VolumeSize: 2000, VolumeType: gp2}
+
+
+
+
+
