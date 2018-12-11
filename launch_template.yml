@@ -4,8 +4,8 @@
 ami: 
 ubuntu: "16.04 LTS"
 instance-type: "t3.small"
-instance-name: dudarino_instance
-username: dudarino
+#instance-name: dudarino_instance
+#username: dudarino
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
 BlockDeviceMappings:
 - DeviceName: /dev/sda1

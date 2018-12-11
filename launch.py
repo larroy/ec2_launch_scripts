@@ -174,8 +174,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description="launcher")
     parser.add_argument('-n', '--instance-name', default=launch_template.get('instance-name', "{}-{}".format('worker', getpass.getuser())))
     parser.add_argument('-i', '--instance-type', default=launch_template['instance-type'])
-    parser.add_argument('--ubuntu', default=launch_template['ubuntu'])
-    parser.add_argument('-u', '--username', default=launch_template['username'])
+    parser.add_argument('--ubuntu', default=launch_template.get('ubuntu'))
+    parser.add_argument('-u', '--username',
+                        default=launch_template.get('username', getpass.getuser()))
     ssh_key = launch_template.get('ssh-key', os.path.join(expanduser("~"),".ssh","id_rsa.pub"))
     parser.add_argument('--ssh-key-file', default=ssh_key)
     parser.add_argument('--ssh-key-name', default="ssh_{}_key".format(getpass.getuser()))
@@ -203,7 +204,7 @@ def provision(host, username):
     assert username
     ansible_cmd= [
         "ansible-playbook",
-        "-v",
+        #"-v",
         "-u", "ubuntu",
         "-i", "{},".format(host),
         "playbook.yml",

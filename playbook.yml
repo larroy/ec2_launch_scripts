@@ -1,5 +1,5 @@
 --- # Ansible playbook to provision instances for myself
-- name: provision
+- name: provisioning with Ansible
   hosts: all
   gather_facts: no
   become: true
@@ -11,6 +11,8 @@
         dpkg_options: 'force-confold,force-confdef'
         name:
             - vim-nox
+            - fish
+            - nmon
             - silversearcher-ag
             - tree
             - git
@@ -55,6 +57,8 @@
       wait_for:
         path: /tmp/userdata_complete
         state: present
+        timeout: 1200
+        sleep: 3
 
 
 #
@@ -80,6 +84,7 @@
     - name: Configure /home/{{ user_name }}
       file:
         path: /home/{{ user_name }}
+        recurse: yes
         owner: "{{ user_name }}"
         group: "{{ user_name }}"
 
