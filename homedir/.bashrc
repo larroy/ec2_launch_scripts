@@ -211,3 +211,4 @@ md() {
 
 export EDITOR=vim
 alias open='xdg-open'
+/usr/bin/zsh && exit

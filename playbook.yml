@@ -123,6 +123,7 @@
             - sudo
             - unzip
             - wget
+            - zsh
     - apt:
         state: absent
         name:
@@ -130,4 +131,8 @@
             - btrfs-tools
 
     - apt: autoremove=yes
+    - git:
+        repo: https://github.com/sorin-ionescu/prezto.git
+        dest: /home/{{ user_name }}/.zprezto
+        recursive: yes
 
