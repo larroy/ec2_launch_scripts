@@ -232,7 +232,7 @@ def main():
     if not instance_name:
         instance_name = args.instance_name
 
-    instance_type = input("instance_type [{}]: ".format(args.instance_type))
+    instance_type = input("instance_type (https://www.ec2instances.info) [{}]: ".format(args.instance_type))
     if not instance_type:
         instance_type = args.instance_type
 
@@ -241,7 +241,7 @@ def main():
         ssh_key_file = args.ssh_key_file
     assert os.path.isfile(ssh_key_file)
 
-    ubuntu = input("ubuntu release such as '18.04' (or specific 'ami') [{}]: ".format(args.ubuntu))
+    ubuntu = input("ubuntu release (or specific 'ami') [{}]: ".format(args.ubuntu))
     if not ubuntu:
         ubuntu = args.ubuntu
 

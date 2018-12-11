@@ -81,7 +81,7 @@ def raid_setup(raid_device, mount, level='0') -> bool:
     call(['partprobe'])
 
     # Create raid
-    cmd = ['mdadm', '--create', '--force', '--verbose', raid_device, '--level={}'.format(level), '-c64K',
+    cmd = ['mdadm', '--create', '--force', '--verbose', raid_device, '--level={}'.format(level), '-c256K',
         '--raid-devices={}'.format(len(ephemeral_devices))]
     cmd.extend(ephemeral_devices)
     check_call(cmd)
