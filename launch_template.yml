@@ -1,7 +1,9 @@
 ---
 # https://cloud-images.ubuntu.com/locator/ec2/
-ami: ami-09f0b8b3e41191524  # 16.04 eu-west-1
-instance-type: t3.small
+# ami: ami-09f0b8b3e41191524  # 16.04 eu-west-1 # leave empty to choose ami automatically
+ami: 
+ubuntu: "16.04 LTS"
+instance-type: "t3.small"
 instance-name: dudarino_instance
 username: dudarino
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
