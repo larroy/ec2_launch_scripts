@@ -26,6 +26,10 @@ You can copy the files that you want into `homedir/` which will populate your ho
 You should [configure your AWS credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
 and have EC2 permissions:
 
+Edit `launch_template.yml` to your needs and launch!
+
+You can choose your ami depending on your region. For example using the [ubuntu ami locator](https://cloud-images.ubuntu.com/locator/ec2/).
+And choose your [instance type](https://www.ec2instances.info) depending on your needs.
 
 ```
 $ ./launch.py
@@ -39,8 +43,6 @@ user name [piotr]:
 
 After a few minutes the instance is created and provisioned and the hostname is printed on the
 output so you can ssh to it.
-
-You can choose your ami depending on your region. For example using the [ubuntu ami locator](https://cloud-images.ubuntu.com/locator/ec2/).
 
 # GPU instances
 For gpu instances you can run `nvidia_setup.sh` once.
