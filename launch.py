@@ -269,10 +269,15 @@ def main():
     try:
         logging.info("Creating security groups")
         security_groups = create_security_groups(ec2_client, ec2_resource)
+    except botocore.exceptions.ClientError as e:
+        logging.exception("Continuing: Security group might already exist or be used by a running instance")
+        security_groups = ['ssh_anywhere']
+
+
+    try:
         ec2_client.import_key_pair(KeyName=args.ssh_key_name, PublicKeyMaterial=read_ssh_key(ssh_key_file))
     except botocore.exceptions.ClientError as e:
-        logging.exception("Security group might already exist or be used by a running instance")
-        security_groups = ['ssh_anywhere']
+        logging.exception("Continuing: Key pair might already exist")
 
     logging.info("creating instances")
     with open('launch_template.yml', 'r') as f:
