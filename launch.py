@@ -19,6 +19,7 @@ import re
 def get_ubuntu_ami(region, release, arch='amd64', instance_type='hvm:ebs-ssd'):
     # https://aws.amazon.com/amazon-linux-ami/instance-type-matrix/
     # https://cloud-images.ubuntu.com/locator/ec2/  -> Js console -> Network
+    ssl._create_default_https_context = ssl._create_unverified_context
     ami_list = yaml.safe_load(urllib.request.urlopen("https://cloud-images.ubuntu.com/locator/ec2/releasesTable").read())['aaData']
     # Items look like:
     #['us-east-1',
