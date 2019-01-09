@@ -20,6 +20,8 @@ pip3 install -r requirements.txt
 ```
 
 You can copy the files that you want into `homedir/` which will populate your home in the instance.
+For example you might want to copy your .ssh folder, shell and editor configuration there.
+  
 
 # Run it!
 
