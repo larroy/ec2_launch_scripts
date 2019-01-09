@@ -43,6 +43,7 @@
             - wget
             - sysstat
             - awscli
+            - ccache
     - apt:
         state: absent
         name:
