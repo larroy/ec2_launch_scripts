@@ -29,7 +29,7 @@ def get_ubuntu_ami(region, release, arch='amd64', instance_type='hvm:ebs-ssd'):
     # '20180621',
     # '<a href="https://console.aws.amazon.com/ec2/home?region=us-east-1#launchAmi=ami-71e2b40e">ami-71e2b40e</a>',
     # 'hvm']
-    res = [x for x in ami_list if x[0] == 'eu-west-1' and x[2].startswith(release) and x[3] == arch and x[4] == instance_type]
+    res = [x for x in ami_list if x[0] == region and x[2].startswith(release) and x[3] == arch and x[4] == instance_type]
     ami_link = res[0][6]
     ami_id = re.sub('<[^<]+?>', '', ami_link)
     return ami_id
