@@ -14,6 +14,7 @@ import botocore
 import yaml
 import urllib.request
 import re
+import ssl
 
 
 def get_ubuntu_ami(region, release, arch='amd64', instance_type='hvm:ebs-ssd'):
