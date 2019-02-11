@@ -45,6 +45,8 @@
             - awscli
             - ccache
             - virtualenv
+            - python3-setuptools
+            - python-setuptools
     - apt:
         state: absent
         name:
