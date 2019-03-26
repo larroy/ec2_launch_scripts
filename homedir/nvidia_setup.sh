@@ -16,6 +16,6 @@ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.li
 
 sudo apt-get update
 
-sudo apt-get -y install nvidia-410
+sudo apt-get -y install nvidia-driver-418
 sudo apt-get install -y nvidia-docker2
 sudo pkill -SIGHUP dockerd
