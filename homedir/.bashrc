@@ -38,7 +38,9 @@ fi
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
+    xterm) color_prompt=yes;;
 esac
+source ~/etc/bash/color.sh
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
@@ -56,25 +58,21 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-#if [ "$color_prompt" = yes ]; then
-#    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-#else
-#    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-#fi
-#unset color_prompt force_color_prompt
+if [ "$color_prompt" = yes ]; then
+  PS1="\u@${Green}\h${Color_Off}:\$?:\w\\$ "
+else
+  PS1='\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
-#case "$TERM" in
-#xterm*|rxvt*)
-#    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-#    ;;
-#*)
-#    ;;
-#esac
-
-# PROMPT
-
-source /usr/lib/git-core/git-sh-prompt
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
 
 function we_are_in_git_work_tree {
     git rev-parse --is-inside-work-tree &> /dev/null
@@ -94,6 +92,7 @@ function parse_git_status {
 
 export PS1="\u@\h:\$?:\w\[$Green\]\$(__git_ps1)\$(parse_git_status)\[$Color_Off\]\\$ "
 
+
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -105,43 +104,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
-
-# some more ls aliases
-export LS_OPTIONS='-h'
-alias ll='ls $LS_OPTIONS -alF'
-alias la='ls -A'
-alias lS='ls $LS_OPTIONS -rlS'
-alias l='ls $LS_OPTIONS -lF'
-alias lt='ls $LS_OPTIONS -rltF'
-
-alias cp='ionice -c3 nice -19 cp -i'
-alias mv='ionice -c3 nice -19 mv -i'
-alias rm='ionice -c3 nice -19 rm'
-alias ds='ionice -c3 nice -n19 du -xms -- * | nice -n19 sort -n'
-alias va='mplayer -fs -vo xv -cache 50000' 
-alias hgmaindiff="hg diff -r 'ancestor(default,.)'"
-alias bt='./build.sh && ./test.sh'
-
-alias gitst='git status -uno | less'
-alias gitu='git st -u | egrep -v "(~$|swp$)"'
-
-alias ipy="python -c 'import IPython; IPython.terminal.ipapp.launch_new_instance()'"
-
-
-zi() {
-    set -e
-    FILE=$(echo $1 | perl -wne 's/:(\d+)(?::\d+:?)?/ +$1/; print')
-    echo $FILE
-    vim $FILE
-}
-
-f() {
-    A=($@);
-    REST=${A[@]:1:$#};
-    find -iname "*$1*" $REST;
-}
-
-ulimit -c unlimited
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -168,12 +130,34 @@ if ! shopt -oq posix; then
 fi
 
 
-ulimit -c unlimited
+export EDITOR="vim"
+export PATH="~/bin:$PATH"
+export LANG="en_US.UTF-8"
+export LC_COLLATE="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export LC_MESSAGES="en_US.UTF-8"
+export LC_MONETARY="en_US.UTF-8"
+export LC_NUMERIC="en_US.UTF-8"
+export LC_TIME="en_US.UTF-8"
+export LC_ALL=
+
+export LS_OPTIONS="-h"
+alias ll='ls $LS_OPTIONS -alF'
+alias la='ls -A'
+alias lS='ls $LS_OPTIONS -rlS'
+alias l='ls $LS_OPTIONS -lF'
+alias lt='ls $LS_OPTIONS -rltF'
+
+alias gitst='git status -uno | less'
+alias gitu='git st -u | egrep -v "(~$|swp$)"'
+
+alias ds='nice -n19 du -xms -- * | nice -n19 sort -n'
 
 
-idx() {
-    ctags -R --extra=fq --c++-kinds=+p --fields=+iaS --verbose `find -regextype posix-extended -regex ".*\.(cpp|h|hpp|cxx|hh)$"`
-    cscope -v -R -b
+f() {
+    A=($@);
+    REST=${A[@]:1:$#};
+    find -iname "*$1*" $REST;
 }
 
 function s {
@@ -181,7 +165,6 @@ function s {
     disown
 }
 
-complete -F _command launch
 
 encrypt()
 {
@@ -193,10 +176,69 @@ decrypt()
     openssl enc -d -aes-256-cfb -salt -in $1 -out $2
 }
 
+youtube()
+{
+  youtube-dl -f best -o "%(playlist_index)s - %(title)s.%(ext)s" $@
+}
+
+tomp3()
+{
+    mplayer -ao pcm:file=__dump__.wav -vc dummy -vo null "$1"
+    lame -q0 -V 0 __dump__.wav
+    mv __dump__.mp3 "${1%.*}.mp3"
+    rm __dump__.wav
+}
+
+towav()
+{
+    mplayer -ao pcm:file=__dump__.wav -vc dummy -vo null "$1"
+}
+
+
+
+# Work
+
+alias br='brazil'
+alias brel='brazil-build release'
+
+bb() {
+  nice -n19 brazil-build $@
+}
+
+bbr() {
+  nice -n19 brazil-recursive-cmd -- $@
+}
+
+bbrp() {
+  nice -n19 brazil-recursive-cmd --reverse -- sh -c "echo pull --rebase at $(pwd); git pu"
+}
+
+bbR() {
+  echo "recursive brazil-build release (brazil-recursive-cmd)"
+  nice -n19 brazil-recursive-cmd -- "echo -n 'Building: '; pwd; brazil-build release"
+}
+
+
+
+bbP() {
+  echo "recursive brazil-build release (brazil-recursive-cmd)"
+  nice -n19 brazil-recursive-cmd -- "pwd; echo '******************************'; git pu"
+}
+
+alias bsync='brazil ws --sync --md'
+
+
 clone_mxnet()
 {
+    if [ "$#" -ne 1 ];
+        then echo "illegal number of parameters"
+    fi
     pushd .
-    git clone --recursive git@github.com:apache/incubator-mxnet.git mxnet
+    git clone --recursive git@github.com:larroy/mxnet.git $1
+    cd $1
+    git remote add upstream git@github.com:apache/incubator-mxnet.git
+    git remote add edge git@github.com:MXNetEdge/incubator-mxnet.git
+    git fetch --all
     popd
 }
 
@@ -204,10 +246,10 @@ clone_mxnet()
 md() {
     if [ "$#" -ne 1 ];
         then echo "illegal number of parameters"
-        return
     fi
     pandoc $1 | lynx -stdin
 }
 
 export EDITOR=vim
 alias open='xdg-open'
+

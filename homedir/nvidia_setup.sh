@@ -5,10 +5,14 @@
 #
 set -exuo pipefail
 
-sudo add-apt-repository -y ppa:graphics-drivers/ppa
-
 curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
   sudo apt-key add -
+  
+wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub | 
+    sudo apt-key add -
+
+
+sudo add-apt-repository -y ppa:graphics-drivers/ppa
 
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
 curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
@@ -22,6 +26,7 @@ sudo pkill -SIGHUP dockerd
 
 
 wget "https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1804-10-1-local-10.1.105-418.39_1.0-1_amd64.deb"
-apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
-apt-get update
-apt-get install cuda
+sudo dpkg -i cuda-repo-ubuntu1804-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+sudo apt-get update
+sudo apt-get install cuda
