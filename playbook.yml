@@ -6,12 +6,14 @@
   become_user: root
   tasks:
 
-#    - apt: {update_cache: yes}
+    - apt_repository:
+        repo: ppa:fish-shell/release-3
     - apt:
+        update_cache: yes
         dpkg_options: 'force-confold,force-confdef'
         name:
-            - vim-nox
             - fish
+            - vim-nox
             - nmon
             - silversearcher-ag
             - tree
