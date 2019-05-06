@@ -12,6 +12,8 @@
         update_cache: yes
         dpkg_options: 'force-confold,force-confdef'
         name:
+            - vim-nox
+            - cgdb
             - fish
             - vim-nox
             - nmon
