@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -exuo pipefail
-sudo apt remove --purge --auto-remove cmake
+sudo apt -y remove --purge --auto-remove cmake
 
 # Update CMAKE for correct cuda autotedetection: https://github.com/clab/dynet/issues/1457
 version=3.14
