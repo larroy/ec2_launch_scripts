@@ -285,7 +285,7 @@ def main():
     with open('launch_template.yml', 'r') as f:
         launch_template = yaml.load(f)
     instances = create_instances(ec2_resource, instance_name, instance_type, args.ssh_key_name, ami,
-    security_groups, launch_template['BlockDeviceMappings'])
+    security_groups, launch_template.get('BlockDeviceMappings', []))
     wait_for_instances(instances)
     hosts = [i.public_dns_name for i in instances]
     for host in hosts:
