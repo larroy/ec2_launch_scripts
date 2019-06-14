@@ -110,20 +110,18 @@ def assemble_userdata():
         combined_message.attach(sub_message)
     return combined_message
 
-def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, blockDeviceMappings, instanceCount=1):
+def create_instances(ec2, tag, instance_type, keyName, ami, security_groups, create_instance_kwargs, instanceCount=1):
     logging.info("Launching {} instances".format(instanceCount))
-    instances = ec2.create_instances(
-        ImageId = ami
-        , InstanceInitiatedShutdownBehavior = 'terminate'
-        , BlockDeviceMappings = blockDeviceMappings
-        , MinCount = instanceCount
-        , MaxCount = instanceCount
-        , KeyName = keyName
-        , InstanceType = instance_type
-        #, Placement = {'AvailabilityZone': 'eu-central-1a'}
-        , UserData = assemble_userdata().as_string()
-        , SecurityGroupIds = security_groups
-    )
+    kwargs = { 'ImageId': ami
+        , 'MinCount': instanceCount
+        , 'MaxCount': instanceCount
+        , 'KeyName': keyName
+        , 'InstanceType': instance_type
+        , 'UserData': assemble_userdata().as_string()
+        , 'SecurityGroupIds': security_groups
+    }
+    kwargs.update(create_instance_kwargs)
+    instances = ec2.create_instances(**kwargs)
     ec2.create_tags(
         Resources = [instance.id for instance in instances]
         , Tags = [
@@ -284,8 +282,15 @@ def main():
     logging.info("creating instances")
     with open('launch_template.yml', 'r') as f:
         launch_template = yaml.load(f)
-    instances = create_instances(ec2_resource, instance_name, instance_type, args.ssh_key_name, ami,
-    security_groups, launch_template.get('BlockDeviceMappings', []))
+    instances = create_instances(
+        ec2_resource,
+        instance_name,
+        instance_type,
+        args.ssh_key_name,
+        ami,
+        security_groups,
+        launch_template.get('CreateInstanceArgs', {}))
+
     wait_for_instances(instances)
     hosts = [i.public_dns_name for i in instances]
     for host in hosts:
