@@ -169,3 +169,15 @@
 
     - apt: autoremove=yes
 
+
+#
+# Other
+#
+    - name: adjust ccache max size to 50G
+      command: ccache -M50G
+
+- name: Custom commands
+  hosts: all
+  tasks:
+    - name: Change shell to fish
+      shell: chsh -s `which fish`
