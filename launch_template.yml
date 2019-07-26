@@ -4,6 +4,7 @@
 ami:
 ubuntu: "18.04 LTS"
 instance-type: "c5d.18xlarge"
+#instance-type: "c5.12xlarge"
 ##instance-type: "m2.2xlarge"
 #instance-type: "p3.16xlarge"
 #instance-type: "p3dn.24xlarge"

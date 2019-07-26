@@ -178,6 +178,9 @@
 
 - name: Custom commands
   hosts: all
+  gather_facts: no
+  become: true
+  become_user: root
   tasks:
     - name: Change shell to fish
-      shell: chsh -s `which fish`
+      shell: chsh -s `which fish` {{ user_name }}
