@@ -51,6 +51,7 @@
             - virtualenv
             - python3-setuptools
             - python-setuptools
+            - libcurl4-openssl-dev
     - apt:
         state: absent
         name:
