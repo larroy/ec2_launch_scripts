@@ -125,6 +125,12 @@
         line: '%wheel ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
 
+    - name: Allow attaching gdb
+      lineinfile:
+        dest: /etc/sysctl.d/10-ptrace.conf
+        state: present
+        regexp: '^kernel.yama.ptrace_scope'
+        line: 'kernel.yama.ptrace_scope = 0'
 
 #
 # Docker Install
