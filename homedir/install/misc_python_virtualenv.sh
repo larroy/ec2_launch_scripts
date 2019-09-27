@@ -6,7 +6,7 @@ git clone git@github.com:dmlc/gluon-cv.git
 cd gluon-cv
 pip install -e .
 pip install ipython
-pip install horovod
+HOROVOD_GPU_ALLREDUCE=NCCL pip install --no-cache-dir horovod
 wget https://gluon-cv.mxnet.io/_downloads/b6ade342998e03f5eaa0f129ad5eee80/mscoco.py
 pip install --upgrade cython
 pip install pycocotools
