@@ -1,0 +1,28 @@
+--- # Ansible playbook 
+- name: provisioning with Ansible
+  hosts: all
+  gather_facts: no
+  become: true
+  become_user: root
+  tasks:
+    - name: download mpi installer
+      get_url: 
+        url: http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/15553/aws_impi.sh
+        dest: /tmp/aws_impi.sh
+        mode: 0755
+
+    - name: install impi
+      shell: ./aws_impi.sh install dont_check_efa
+      args:
+        executable: /bin/bash
+        chdir: /tmp
+        creates: /opt/intel/impi/
+
+    - name: add MPI env variables to /etc/bashrc
+      lineinfile:
+        dest: /etc/bash.bashrc
+        state: present
+        line: source /opt/intel/impi/2019.4.243/intel64/bin/mpivars.sh
+        create: yes
+
+

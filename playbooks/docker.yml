@@ -1,0 +1,53 @@
+--- # Ansible playbook to provision instances for myself
+- name: Docker installation
+  hosts: all
+  gather_facts: no
+  become: true
+  become_user: root
+  tasks:
+#
+# Docker Install
+#
+    - command: lsb_release -cs
+      register: lsb_release
+
+    - debug:
+        msg: "{{ lsb_release.stdout }}"
+
+    - apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+
+    - apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
+
+    - name: Create new docker data folder in /home/docker (uses ephemeral storage)
+      file:
+        path: /home/docker
+        state: directory
+
+    - name: Put docker images folder in /home
+      mount:
+        path: /var/lib/docker
+        src: /home/docker
+        fstype: none
+        opts: bind
+        state: mounted
+
+
+    - name: Installing docker-ce
+      apt:
+        name:
+            - docker-ce
+
+    - name: Add {{ user_name }} to docker group
+      user:
+        name: "{{ user_name }}"
+        groups: docker
+        append: yes
+
+    - name: Install docker pip package
+      pip:
+        name: docker
+        executable: pip3
+
+    - apt: autoremove=yes

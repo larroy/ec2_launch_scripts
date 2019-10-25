@@ -1,0 +1,27 @@
+--- # Ansible playbook 
+- name: provisioning with Ansible
+  hosts: all
+  gather_facts: no
+  become: true
+  become_user: root
+  tasks:
+    - name: Provision Bert datasets (enwiki)
+      shell: |
+        set -e
+        aws s3 cp --recursive --quiet s3://bert-pretraining/datasets/enwiki/enwiki-feb-doc-split /home/{{ user_name }}/mxnet-data/bert-pretraining/datasets/enwiki/enwiki-feb-doc-split/
+      args:
+        executable: /bin/bash
+        chdir: /home/{{ user_name }}
+        creates: /home/{{ user_name }}/mxnet-data/bert-pretraining/datasets/enwiki/enwiki-feb-doc-split/
+
+    - name: Provision Bert datasets (books)
+      shell: |
+        set -e
+        aws s3 cp --recursive --quiet s3://bert-pretraining/datasets/book-corpus/book-corpus-large-split/ /home/{{ user_name }}/mxnet-data/bert-pretraining/datasets/book-corpus/book-corpus-large-split/
+      args:
+        executable: /bin/bash
+        chdir: /home/{{ user_name }}
+        creates: /home/{{ user_name }}/mxnet-data/bert-pretraining/datasets/book-corpus/book-corpus-large-split/
+
+
+

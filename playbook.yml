@@ -58,16 +58,13 @@
             - btrfs-progs
             - btrfs-tools
 
-#
-# Wait for raid setup to finish
-#
-
-    - name: Wait for userdata to finish
-      wait_for:
-        path: /tmp/userdata_complete
+    - name: Allow attaching gdb
+      lineinfile:
+        dest: /etc/sysctl.d/10-ptrace.conf
         state: present
-        timeout: 1200
-        sleep: 3
+        regexp: '^kernel.yama.ptrace_scope'
+        line: 'kernel.yama.ptrace_scope = 0'
+
 
 
 #
@@ -84,6 +81,28 @@
         name: "{{ user_name }}"
         groups: wheel
         shell: /bin/bash
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+
+
+#
+# Wait for raid setup to finish
+#
+
+    - name: Wait for userdata to finish
+      wait_for:
+        path: /root/userdata_complete
+        state: present
+        timeout: 1200
+        sleep: 3
+
 
     - name: sync homedir/ to /home/{{ user_name }}
       synchronize:
@@ -117,64 +136,13 @@
         mode: "u=rwx,g=rx,o=rx"
         recurse: yes
 
-    - name: Allow 'wheel' group to have passwordless sudo
+    - name: disable StrictHostKeyChecking for ssh
       lineinfile:
-        dest: /etc/sudoers
+        dest: /home/{{ user_name }}/.ssh/config
         state: present
-        regexp: '^%wheel'
-        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
-        validate: 'visudo -cf %s'
+        line: 'StrictHostKeyChecking=no'
+        create: yes
 
-    - name: Allow attaching gdb
-      lineinfile:
-        dest: /etc/sysctl.d/10-ptrace.conf
-        state: present
-        regexp: '^kernel.yama.ptrace_scope'
-        line: 'kernel.yama.ptrace_scope = 0'
-
-#
-# Docker Install
-#
-    - command: lsb_release -cs
-      register: lsb_release
-
-    - debug:
-        msg: "{{ lsb_release.stdout }}"
-
-    - apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-
-    - apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release.stdout }} stable
-
-    - name: Create new docker data folder in /home/docker (uses ephemeral storage)
-      file:
-        path: /home/docker
-        state: directory
-
-    - name: Put docker images folder in /home
-      mount:
-        path: /var/lib/docker
-        src: /home/docker
-        fstype: none
-        opts: bind
-        state: mounted
-
-
-    - apt:
-        name:
-            - docker-ce
-
-    - user:
-        name: "{{ user_name }}"
-        groups: docker
-        append: yes
-
-    - pip:
-        name: docker
-        executable: pip3
-
-    - apt: autoremove=yes
 
 
 #
@@ -183,11 +151,20 @@
     - name: adjust ccache max size to 50G
       command: ccache -M50G
 
-- name: Custom commands
-  hosts: all
-  gather_facts: no
-  become: true
-  become_user: root
-  tasks:
-    - name: Change shell to fish
-      shell: chsh -s `which fish` {{ user_name }}
+      #- name: Custom commands
+      #  hosts: all
+      #  gather_facts: no
+      #  become: true
+      #  become_user: root
+      #  tasks:
+      #    - name: Change shell to fish
+      #      shell: chsh -s `which fish` {{ user_name }}
+
+
+# Other playbooks
+#
+- import_playbook: playbooks/docker.yml
+- import_playbook: playbooks/gpu.yml
+#- import_playbook: playbooks/efa.yml
+#- import_playbook: playbooks/mpi.yml
+#- import_playbook: playbooks/datasets.yml

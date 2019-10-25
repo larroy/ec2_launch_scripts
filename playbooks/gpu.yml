@@ -1,0 +1,59 @@
+--- # Ansible playbook to provision instances for myself
+- name: provisioning with Ansible
+  hosts: all
+  gather_facts: no
+  become: true
+  become_user: root
+  tasks:
+    - name: NVidia cuda repo key
+      apt_key:
+        url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+
+    - name: NVidia docker key
+      apt_key:
+        url: https://nvidia.github.io/nvidia-docker/gpgkey
+
+    - name: Machine learning NVidia repo
+      apt:
+        deb: https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+
+    - name: NVidia CUDA repo 
+      apt:
+        deb: https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1804-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+
+#    - apt_key:
+#        name: Add NVidia public key for CUDA from 
+#        file: /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+  
+    - name: graphics drivers ppa
+      apt_repository:
+        repo: ppa:graphics-drivers/ppa
+
+    - name: libnvidia-container
+      apt_repository:
+        repo: deb https://nvidia.github.io/libnvidia-container/ubuntu18.04/$(ARCH) /
+
+    - name: nvidia-container-runtime
+      apt_repository:
+        repo: deb https://nvidia.github.io/nvidia-container-runtime/ubuntu18.04/$(ARCH) /
+
+    - name: nvidia-docker
+      apt_repository:
+        repo: deb https://nvidia.github.io/nvidia-docker/ubuntu18.04/$(ARCH) /
+
+    - apt:
+        update_cache: yes
+        dpkg_options: 'force-confold,force-confdef'
+        name:
+          - nvidia-driver-418
+          - nvidia-docker2
+          - cuda
+          - libcudnn7
+          - libcudnn7-dev
+          - libnccl2
+          - libnccl-dev
+ 
+    - name: reload docker
+      command: pkill -SIGHUP dockerd
+
+

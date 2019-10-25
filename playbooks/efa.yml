@@ -1,0 +1,38 @@
+--- # Ansible playbook to provision distributed training and EFA
+- name: EFA distributed training provisioning
+  hosts: all
+  gather_facts: no
+  become: true
+  become_user: root
+  vars:
+    efa_install_dir: /tmp/efa_install
+  tasks:
+    - name: EFA install dir
+      file:
+        path: "{{efa_install_dir}}"
+        state: directory
+
+    - name: Download EFA installer
+      get_url:
+        url: https://s3-us-west-2.amazonaws.com/aws-efa-installer/aws-efa-installer-1.5.4.tar.gz
+        dest: "{{ efa_install_dir }}/aws-efa-installer-1.5.4.tar.gz"
+
+    - name: Extract EFA installer
+      unarchive: 
+        src: "{{efa_install_dir}}/aws-efa-installer-1.5.4.tar.gz"
+        dest: "{{efa_install_dir}}/"
+        remote_src: yes
+         
+    - name: EFA install
+      command: ./efa_installer.sh -y
+      args:
+        chdir: "{{efa_install_dir}}/aws-efa-installer"
+
+#      command: tar -xf aws-efa-installer-1.5.4.tar.gz
+#      args:
+#        chdir: "{{efa_install_dir}}"
+
+#    - name: Extract EFA installer
+#      command: tar -xf aws-efa-installer-1.5.4.tar.gz
+#      args:
+#        chdir: "{{efa_install_dir}}"
