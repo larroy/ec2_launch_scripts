@@ -32,7 +32,7 @@
             - iptables-persistent
             - nmap
             - build-essential
-            - cmake
+#            - cmake
             - ninja-build
             - curl
             - libatlas-base-dev
@@ -143,6 +143,12 @@
         line: 'StrictHostKeyChecking=no'
         create: yes
 
+    - name: Configure /home/{{ user_name }}
+      file:
+        path: /home/{{ user_name }}
+        recurse: yes
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
 
 
 #
@@ -159,6 +165,28 @@
       #  tasks:
       #    - name: Change shell to fish
       #      shell: chsh -s `which fish` {{ user_name }}
+      #
+    - name: Install recent CMake
+      shell: |
+        set -exuo pipefail
+        apt -y remove --purge --auto-remove cmake
+
+        # Update CMAKE for correct cuda autotedetection: https://github.com/clab/dynet/issues/1457
+        version=3.14
+        build=0
+        mkdir -p /tmp/cmake
+        cd /tmp/cmake
+        wget https://cmake.org/files/v$version/cmake-$version.$build.tar.gz
+        tar -xzvf cmake-$version.$build.tar.gz
+        cd cmake-$version.$build/
+        ./bootstrap --system-curl --parallel=$(nproc)
+        make -j$(nproc)
+        make install
+
+      args:
+        executable: /bin/bash
+        creates: /usr/local/bin/cmake
+
 
 
 # Other playbooks

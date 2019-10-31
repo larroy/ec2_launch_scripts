@@ -19,15 +19,15 @@
 
     - name: NVidia CUDA repo 
       apt:
-        deb: https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1804-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+        deb: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.1.243-1_amd64.deb
 
 #    - apt_key:
 #        name: Add NVidia public key for CUDA from 
 #        file: /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
   
-    - name: graphics drivers ppa
-      apt_repository:
-        repo: ppa:graphics-drivers/ppa
+        #    - name: graphics drivers ppa
+        #      apt_repository:
+        #        repo: ppa:graphics-drivers/ppa
 
     - name: libnvidia-container
       apt_repository:
