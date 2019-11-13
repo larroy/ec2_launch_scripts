@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 from subprocess import check_output
 from collections import namedtuple
 import sys
 
 PciDev = namedtuple('PciDev', ['dev', 'devclass', 'vendor', 'devid'])
+
+NV_VENDOR_IDS=set(['1013', '10de'])
 
 def parse_pci(pci):
     devices = []
@@ -22,7 +23,7 @@ def parse_pci(pci):
     for dev in devices:
         # https://pci-ids.ucw.cz/read/PD/03
         # 3Dcard or VGA from NVidia
-        if (dev.devclass == '0300' or dev.devclass == '0302') and dev.vendor == '1013':
+        if (dev.devclass == '0300' or dev.devclass == '0302') and dev.vendor in NV_VENDOR_IDS:
             num_gpu += 1
     return num_gpu
 
@@ -31,8 +32,12 @@ def gpu_count():
     return parse_pci(lspci)
 
 def main():
-    print(gpu_count())
-    return 0
+    count = gpu_count()
+    print("{} gpus.".format(count))
+    if count:
+        return 0
+    else:
+        return 1
 
 if __name__ == '__main__':
     sys.exit(main())
