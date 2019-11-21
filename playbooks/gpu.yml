@@ -50,8 +50,8 @@
           - cuda
           - libcudnn7
           - libcudnn7-dev
-          - libnccl2
-          - libnccl-dev
+#          - libnccl2
+#          - libnccl-dev
  
     - name: reload docker
       command: pkill -SIGHUP dockerd

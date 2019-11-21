@@ -1,0 +1,48 @@
+--- # Ansible playbook to provision instances for myself
+- name: Setup NCCL library, AWS EFA plugin and tests
+  hosts: all
+  gather_facts: no
+  become: true
+  become_user: "{{ user_name }}"
+  tasks:
+    - name: Install latest nccl library
+      shell: |
+        set -e
+        git clone -q https://github.com/NVIDIA/nccl.git
+        cd nccl
+        make -j src.build 2>&1 >> build.log
+        sudo make install PREFIX=/usr/local
+      args:
+        executable: /bin/bash
+        chdir: "/home/{{ user_name }}"
+        creates: /usr/local/lib/libnccl.so
+
+    - name: Install aws-ofi-nccl plugin
+      shell: |
+        set -e
+        git clone -q https://github.com/aws/aws-ofi-nccl.git
+        cd aws-ofi-nccl
+        git checkout origin/aws
+        ./autogen.sh
+        ./configure --with-libfabric=/opt/amazon/efa --with-cuda=/usr/local/cuda \
+          --with-nccl=/usr/local --with-mpi=/opt/amazon/openmpi
+        PATH=/opt/amazon/openmpi/bin:$PATH make
+        sudo make install
+      args:
+        executable: /bin/bash
+        chdir: "/home/{{ user_name }}"
+        creates: /usr/local/lib/libnccl-net.so
+
+    - name: Install nccl-tests for benchmarking EFA.
+      shell: |
+        set -e
+        git clone -q https://github.com/NVIDIA/nccl-tests.git
+        cd nccl-tests
+        make MPI=1 MPI_HOME=/opt/amazon/openmpi CUDA_HOME=/usr/local/cuda NCCL_HOME=/usr/local
+      args:
+        executable: /bin/bash
+        chdir: "/home/{{ user_name }}"
+        creates: "/home/{{ user_name }}/nccl-tests"
+
+
+
