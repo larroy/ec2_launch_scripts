@@ -45,7 +45,7 @@
         update_cache: yes
         dpkg_options: 'force-confold,force-confdef'
         name:
-          - nvidia-driver-418
+          - nvidia-driver-440
           - nvidia-docker2
           - cuda
           - libcudnn7
