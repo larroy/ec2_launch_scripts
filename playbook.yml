@@ -192,7 +192,7 @@
 # Other playbooks
 #
 - import_playbook: playbooks/docker.yml
-- import_playbook: playbooks/gpu.yml
+#- import_playbook: playbooks/gpu.yml
 #- import_playbook: playbooks/efa.yml
 #- import_playbook: playbooks/mpi.yml
 #- import_playbook: playbooks/datasets.yml

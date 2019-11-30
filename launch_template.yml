@@ -3,10 +3,10 @@
 # ami: ami-09f0b8b3e41191524  # 16.04 eu-west-1 # leave empty to choose ami automatically
 ami:
 ubuntu: "18.04 LTS"
-#instance-type: "c5d.18xlarge"
+instance-type: "c5d.18xlarge"
 #instance-type: "c5.12xlarge"
 ##instance-type: "m2.2xlarge"
-instance-type: "p3.16xlarge"
+#instance-type: "p3.16xlarge"
 #instance-type: "p3dn.24xlarge"
 #instance-type: "p3.2xlarge"
 #instance-type: "p3dn.24xlarge"
@@ -14,7 +14,7 @@ instance-name: worker
 username: piotr
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
 CreateInstanceArgs:
-    InstanceInitiatedShutdownBehavior: terminate
+    #InstanceInitiatedShutdownBehavior: terminate
     BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs: {DeleteOnTermination: true, VolumeSize: 800, VolumeType: gp2}
