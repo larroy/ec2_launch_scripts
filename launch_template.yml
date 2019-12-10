@@ -3,7 +3,7 @@
 # ami: ami-09f0b8b3e41191524  # 16.04 eu-west-1 # leave empty to choose ami automatically
 ami:
 ubuntu: "18.04 LTS"
-instance-type: "c5d.18xlarge"
+instance-type: "a1.2xlarge"
 #instance-type: "c5.12xlarge"
 ##instance-type: "m2.2xlarge"
 #instance-type: "p3.16xlarge"
@@ -17,12 +17,8 @@ CreateInstanceArgs:
     #InstanceInitiatedShutdownBehavior: terminate
     BlockDeviceMappings:
         - DeviceName: /dev/sda1
-          Ebs: {DeleteOnTermination: true, VolumeSize: 800, VolumeType: gp2}
-        #- DeviceName: /dev/sdf
-        #  Ebs: {DeleteOnTermination: true, VolumeSize: 100, VolumeType: gp2}
-        #- DeviceName: /dev/sdg
-        #  Ebs: {DeleteOnTermination: true, VolumeSize: 100, VolumeType: gp2}
-        #- DeviceName: /dev/sdh
-        #  Ebs: {DeleteOnTermination: true, VolumeSize: 100, VolumeType: gp2}
+          Ebs: {DeleteOnTermination: true, VolumeSize: 200, VolumeType: gp2}
+        - DeviceName: /dev/sdf
+          Ebs: {DeleteOnTermination: false, VolumeSize: 5000, VolumeType: sc1}
     IamInstanceProfile:
         Name: EC2DefaultRoleWithS3
