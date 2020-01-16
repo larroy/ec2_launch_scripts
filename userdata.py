@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""Uses ephemeral storage in AWS EC2 instances to automatically create a RAID device, which can be
+mounted anywhere, note that ephemeral storage is not persistent after instance is stopped but it is
+across reboots."""
 import sys
 import logging
 import os
@@ -39,8 +42,8 @@ def _not(func):
     return not_func
 
 
-
 class BlockDeviceState:
+    '''Cache for block devices from lsblk'''
     @staticmethod
     def blockdevices() -> List[object]:
         lsblk_j = check_output(["lsblk", "-J"]).decode('utf-8')
@@ -179,7 +182,6 @@ def raid_setup(raid_device, mount, level='0') -> bool:
         logging.error("raid_setup: Need at least one ephemeral drive that is not in use to configure the raid, aborting.")
         return False
 
-
     partitions = create_raid_partitions()
     logging.info("Created partitions %s", partitions)
     state.reload()
@@ -229,6 +231,6 @@ def main():
     logging.info("userdata.py finished")
     return 0
 
+
 if __name__ == '__main__':
     sys.exit(main())
-
