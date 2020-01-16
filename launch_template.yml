@@ -3,7 +3,7 @@
 # ami: ami-09f0b8b3e41191524  # 16.04 eu-west-1 # leave empty to choose ami automatically
 ami:
 ubuntu: "18.04 LTS"
-instance-type: "c5d.18xlarge"
+instance-type: "c5d.9xlarge"
 #instance-type: "c5.12xlarge"
 ##instance-type: "m2.2xlarge"
 #instance-type: "p3.16xlarge"

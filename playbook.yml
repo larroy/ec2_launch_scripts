@@ -176,8 +176,8 @@
         apt -y remove --purge --auto-remove cmake
 
         # Update CMAKE for correct cuda autotedetection: https://github.com/clab/dynet/issues/1457
-        version=3.14
-        build=0
+        version=3.16
+        build=2
         mkdir -p /tmp/cmake
         cd /tmp/cmake
         wget https://cmake.org/files/v$version/cmake-$version.$build.tar.gz

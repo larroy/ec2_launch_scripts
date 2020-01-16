@@ -50,6 +50,7 @@
           - cuda
           - libcudnn7
           - libcudnn7-dev
+          - nvidia-cuda-toolkit
 #          - libnccl2
 #          - libnccl-dev
  
