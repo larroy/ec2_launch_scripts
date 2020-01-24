@@ -173,7 +173,7 @@ def parse_args():
         launch_template = yaml.load(f)
     parser = argparse.ArgumentParser(description="launcher")
     parser.add_argument('-n', '--instance-name', default=launch_template.get('instance-name', "{}-{}".format('worker', getpass.getuser())))
-    parser.add_argument('-i', '--instance-type', default=launch_template['instance-type'])
+    parser.add_argument('-i', '--instance-type', default=launch_template.get('instance-type'))
     parser.add_argument('--ubuntu', default=launch_template.get('ubuntu'))
     parser.add_argument('-u', '--username',
                         default=launch_template.get('username', getpass.getuser()))

@@ -1,4 +1,4 @@
---- # Ansible playbook to provision instances for myself
+--- # Ansible playbook
 - name: Docker installation
   hosts: all
   gather_facts: no
