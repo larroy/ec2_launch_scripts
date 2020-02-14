@@ -1,0 +1,59 @@
+ImageId: ami-0d7d80db021ba0d11
+MinCount: 1
+MaxCount: 1
+KeyName: ssh_pllarroy_key
+#InstanceType: p3.2xlarge
+InstanceType: c5.9xlarge
+SecurityGroupIds:
+    - sg-2902ce56
+    - sg-cac294b6
+    - sg-0540d02a69775cd54
+BlockDeviceMappings:
+    - DeviceName: /dev/sda1
+      Ebs: {DeleteOnTermination: true, VolumeSize: 128, VolumeType: io1, Iops: 6000}
+#IamInstanceProfile:
+#    Name: EC2DefaultRoleWithS3
+UserData: |
+    <powershell>
+    $ErrorActionPreference = "Stop"
+    Set-StrictMode -Version Latest
+    function Check-Call {
+        param (
+            [scriptblock]$ScriptBlock
+        )
+        Write-Host "Executing $ScriptBlock"
+        & @ScriptBlock
+        if (($lastexitcode -ne 0)) {
+        Write-Error "Execution failed with $lastexitcode"
+            exit $lastexitcode
+        }
+    }
+    cd C:\Users\Administrator
+    $progressPreference = 'silentlyContinue'
+    Invoke-WebRequest -Uri https://cygwin.com/setup-x86_64.exe -OutFile setup-x86_64.exe
+    .\setup-x86_64.exe --site http://cygwin.mirror.constant.com --quiet-mode --root "C:\cygwin64" --local-package-dir "C:\Users\Administrator" --verbose --prune-install --packages openssh,git,rsync,vim,python3
+    Invoke-WebRequest -Uri https://windows-post-install.s3-us-west-2.amazonaws.com/windows.zip -OutFile windows.zip
+    Expand-Archive -LiteralPath .\windows.zip
+    Invoke-WebRequest -Uri "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=en-US" -OutFile ffox.exe
+    .\ffox.exe /n /s
+    reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced /v HideFileExt /t REG_DWORD /d 0 /f
+    Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+    Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+    Install-Module -Force OpenSSHUtils -Scope AllUsers
+    Set-Service -Name ssh-agent -StartupType 'Automatic'
+    Set-Service -Name sshd -StartupType 'Automatic'
+    Start-Service ssh-agent
+    Start-Service sshd
+    Invoke-WebRequest -Uri https://raw.githubusercontent.com/aiengines/ci/master/ami_generation/windows/setup.ps1 -OutFile setup.ps1
+    Invoke-WebRequest -Uri https://raw.githubusercontent.com/aiengines/ci/master/ami_generation/windows/windows_deps_headless_installer.py -OutFile windows_deps_headless_installer.py
+    Invoke-WebRequest -Uri https://raw.githubusercontent.com/aiengines/ci/master/ami_generation/windows/requirements.txt -OutFile requirements.txt
+    Invoke-WebRequest -Uri https://raw.githubusercontent.com/aiengines/ci/master/ami_generation/windows/jenkins_slave.ps1 -OutFile jenkins_slave.ps1
+    Check-Call { .\setup.ps1 }
+    Check-Call { .\jenkins_slave.ps1 }
+    New-Item -ItemType file userdata_finished
+    Stop-Computer
+    </powershell>
+
+    
+
