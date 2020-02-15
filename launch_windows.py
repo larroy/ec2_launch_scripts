@@ -49,7 +49,10 @@ def main():
     ec2_resource.create_tags(
         Resources = [instance.id for instance in instances]
         , Tags = [
-          {'Key': 'Name', 'Value': '{} windows'.format(getpass.getuser())}
+          {'Key': 'Name', 'Value': '{} windows'.format(getpass.getuser())},
+          {'Key': 'ci:master_private_url', 'Value': 'http://jenkins-priv.mxnet-ci-dev.amazon-ml.com'},
+          {'Key': 'ci:master_url', 'Value': 'http://jenkins.mxnet-ci-dev.amazon-ml.com'},
+          {'Key': 'ci:node_name', 'Value': 'mxnetwindows-cpu_pedro'},
         ]
     )
 

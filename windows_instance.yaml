@@ -12,7 +12,7 @@ BlockDeviceMappings:
     - DeviceName: /dev/sda1
       Ebs: {DeleteOnTermination: true, VolumeSize: 128, VolumeType: io1, Iops: 6000}
 #IamInstanceProfile:
-#    Name: EC2DefaultRoleWithS3
+#    Name: jenkins_slave_role
 UserData: |
     <powershell>
     $ErrorActionPreference = "Stop"
@@ -38,7 +38,7 @@ UserData: |
     Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
     Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-    Install-Module -Force OpenSSHUtils -Scope AllUsers
+    #Install-Module -Force OpenSSHUtils -Scope AllUsers
     Set-Service -Name ssh-agent -StartupType 'Automatic'
     Set-Service -Name sshd -StartupType 'Automatic'
     Start-Service ssh-agent
@@ -47,10 +47,10 @@ UserData: |
     Invoke-WebRequest -Uri https://raw.githubusercontent.com/aiengines/ci/master/ami_generation/windows/windows_deps_headless_installer.py -OutFile windows_deps_headless_installer.py
     Invoke-WebRequest -Uri https://raw.githubusercontent.com/aiengines/ci/master/ami_generation/windows/requirements.txt -OutFile requirements.txt
     Invoke-WebRequest -Uri https://raw.githubusercontent.com/aiengines/ci/master/ami_generation/windows/jenkins_slave.ps1 -OutFile jenkins_slave.ps1
+    Invoke-WebRequest -Uri https://raw.githubusercontent.com/aiengines/ci/master/ami_generation/autoconnect.py -OutFile autoconnect.py
     Check-Call { .\setup.ps1 }
-    #Check-Call { .\jenkins_slave.ps1 }
     New-Item -ItemType file userdata_finished
-    #Stop-Computer
+    Stop-Computer
     </powershell>
 
     
