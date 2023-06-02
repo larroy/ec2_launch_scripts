@@ -7,19 +7,24 @@
   tasks:
     - name: NVidia cuda repo key
       apt_key:
-        url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+        url: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub
 
     - name: NVidia docker key
       apt_key:
         url: https://nvidia.github.io/nvidia-docker/gpgkey
 
-    - name: Machine learning NVidia repo
-      apt:
-        deb: https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
+    - name: NVidia docker key
+      apt_key:
+        url: https://nvidia.github.io/libnvidia-container/gpgkey
+
+#    - name: Machine learning NVidia repo
+#      apt:
+#        deb: https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
 
     - name: NVidia CUDA repo 
-      apt:
-        deb: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.1.243-1_amd64.deb
+      apt_repository:
+        #repo: deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/$(ARCH) /
+        repo: deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64 /
 
 #    - apt_key:
 #        name: Add NVidia public key for CUDA from 
@@ -45,12 +50,12 @@
         update_cache: yes
         dpkg_options: 'force-confold,force-confdef'
         name:
-          - nvidia-driver-440
           - nvidia-docker2
+          - libcudnn8
+          - libcudnn8-dev
           - cuda
-          - libcudnn7
-          - libcudnn7-dev
           - nvidia-cuda-toolkit
+          - nvidia-headless-525-server
 #          - libnccl2
 #          - libnccl-dev
  

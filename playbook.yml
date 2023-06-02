@@ -13,6 +13,7 @@
         dpkg_options: 'force-confold,force-confdef'
         name:
             - vim-nox
+            - fzf
             - cgdb
             - fish
             - vim-nox
