@@ -6,8 +6,8 @@
   become_user: root
   tasks:
 
-    - apt_repository:
-        repo: ppa:fish-shell/release-3
+#    - apt_repository:
+#        repo: ppa:fish-shell/release-3
     - apt:
         update_cache: yes
         dpkg_options: 'force-confold,force-confdef'
@@ -92,19 +92,6 @@
         regexp: '^%wheel'
         line: '%wheel ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
-
-
-
-#
-# Wait for raid setup to finish
-#
-
-    - name: Wait for userdata to finish
-      wait_for:
-        path: /root/userdata_complete
-        state: present
-        timeout: 1200
-        sleep: 3
 
 
     - name: sync homedir/ to /home/{{ user_name }}
