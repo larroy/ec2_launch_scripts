@@ -21,15 +21,15 @@
 #      apt:
 #        deb: https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
 
-    - name: NVidia CUDA repo 
+    - name: NVidia CUDA repo
       apt_repository:
         #repo: deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/$(ARCH) /
         repo: deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64 /
 
 #    - apt_key:
-#        name: Add NVidia public key for CUDA from 
+#        name: Add NVidia public key for CUDA from
 #        file: /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
-  
+
         #    - name: graphics drivers ppa
         #      apt_repository:
         #        repo: ppa:graphics-drivers/ppa
@@ -50,16 +50,23 @@
         update_cache: yes
         dpkg_options: 'force-confold,force-confdef'
         name:
+          - nvidia-headless-530
           - nvidia-docker2
           - libcudnn8
           - libcudnn8-dev
-          - cuda
+#          - cuda
+# pytorch is compiled against cuda 11
+          - cuda-11-8
           - nvidia-cuda-toolkit
-          - nvidia-headless-525-server
 #          - libnccl2
 #          - libnccl-dev
- 
+
     - name: reload docker
       command: pkill -SIGHUP dockerd
 
+
+    - name: Set default cuda version
+      alternatives:
+        name: cuda
+        path: /usr/local/cuda-11.8
 
