@@ -64,6 +64,10 @@ using the `cloud-init` file and `userdata.py` which configures the raid of ephem
 After this is done, [ansible](https://www.ansible.com/) is used to provision the instance by
 installing software such as docker etc.
 
+Run ansible manually:
+
+ansible-playbook -v -u root -i <address>, playbook.yml --extra-vars "user_name=piotr"
+
 # Contributing
 
 Feel free to improve and modify the scripts and send any changes as a PR.
