@@ -18,6 +18,8 @@
             - fish
             - vim-nox
             - nmon
+            - tmux
+            - rsync
             - silversearcher-ag
             - tree
             - git
@@ -36,12 +38,12 @@
 #            - cmake
             - ninja-build
             - curl
-            - libatlas-base-dev
-            - libjemalloc-dev
-            - liblapack-dev
-            - libopenblas-dev
-            - libopencv-dev
-            - libzmq3-dev
+#            - libatlas-base-dev
+#            - libjemalloc-dev
+#            - liblapack-dev
+#            - libopenblas-dev
+#            - libopencv-dev
+#            - libzmq3-dev
             - software-properties-common
             - sudo
             - unzip
@@ -50,24 +52,22 @@
             - awscli
             - ccache
             - virtualenv
-            - python3-setuptools
-            - python-setuptools
             - libcurl4-openssl-dev
             - libtool
             - autoconf
-    - apt:
-        state: absent
-        name:
-            - btrfs-progs
-            - btrfs-tools
-
-    - name: Allow attaching gdb
-      lineinfile:
-        dest: /etc/sysctl.d/10-ptrace.conf
-        state: present
-        regexp: '^kernel.yama.ptrace_scope'
-        line: 'kernel.yama.ptrace_scope = 0'
-
+#    - apt:
+#        state: absent
+#        name:
+#            - btrfs-progs
+#            - btrfs-tools
+#
+#    - name: Allow attaching gdb
+#      lineinfile:
+#        dest: /etc/sysctl.d/10-ptrace.conf
+#        state: present
+#        regexp: '^kernel.yama.ptrace_scope'
+#        line: 'kernel.yama.ptrace_scope = 0'
+#
 
 
 #
@@ -163,9 +163,9 @@
 
 # Other playbooks
 #
-- import_playbook: playbooks/docker.yml
+#- import_playbook: playbooks/docker.yml
 #- import_playbook: playbooks/cmake.yml
-- import_playbook: playbooks/gpu.yml
+#- import_playbook: playbooks/gpu.yml
 #- import_playbook: playbooks/efa.yml
 #- import_playbook: playbooks/mpi.yml
 #- import_playbook: playbooks/nccl.yml
